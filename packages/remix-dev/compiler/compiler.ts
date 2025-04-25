@@ -1,4 +1,3 @@
-import * as fs from "node:fs";
 import * as path from "node:path";
 
 import type { Context } from "./context";
@@ -70,7 +69,7 @@ export let create = async (ctx: Context): Promise<Compiler> => {
       if (error === undefined) {
         error = thrown;
       }
-      void cancel();
+      cancel();
       return err(thrown);
     };
 
@@ -112,8 +111,7 @@ export let create = async (ctx: Context): Promise<Compiler> => {
     // js compilation (implicitly writes artifacts/js)
     let js = await tasks.js;
     if (!js.ok) throw error ?? js.error;
-    let { metafile, outputFiles, hmr } = js.value;
-    writes.push(JS.write(ctx.config, outputFiles));
+    let { metafile, hmr } = js.value;
 
     // artifacts/manifest
     let manifest = await createManifest({
@@ -135,16 +133,7 @@ export let create = async (ctx: Context): Promise<Compiler> => {
         let { serverBuildPath } = serverBundles[i];
         writes.push(Server.write(ctx.config, serverBuildPath, server.value));
       })
-    ).then(() => {
-      // write the version to a sentinel file _after_ the server has been written
-      // this allows the app server to watch for changes to `version.txt`
-      // avoiding race conditions when the app server would attempt to reload a partially written server build
-      let versionTxt = path.join(
-        path.dirname(serverBundles[0].serverBuildPath),
-        "version.txt"
-      );
-      fs.writeFileSync(versionTxt, manifest.version);
-    });
+    );
 
     await Promise.all(writes);
     return manifest;
