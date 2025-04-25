@@ -115,7 +115,7 @@ const supportedRemixEsbuildConfigKeys = [
 ] as const satisfies ReadonlyArray<keyof RemixEsbuildUserConfig>;
 type SupportedRemixEsbuildUserConfig = Pick<
   RemixEsbuildUserConfig,
-  (typeof supportedRemixEsbuildConfigKeys)[number]
+  typeof supportedRemixEsbuildConfigKeys[number]
 >;
 
 const SERVER_ONLY_ROUTE_EXPORTS = ["loader", "action", "headers"];
@@ -147,7 +147,7 @@ const branchRouteProperties = [
 ] as const satisfies ReadonlyArray<keyof RouteManifestEntry>;
 type BranchRoute = Pick<
   RouteManifestEntry,
-  (typeof branchRouteProperties)[number]
+  typeof branchRouteProperties[number]
 >;
 
 export const configRouteToBranchRoute = (
@@ -184,7 +184,7 @@ const excludedRemixConfigPresetKeys = [
 ] as const satisfies ReadonlyArray<keyof VitePluginConfig>;
 
 type ExcludedRemixConfigPresetKey =
-  (typeof excludedRemixConfigPresetKeys)[number];
+  typeof excludedRemixConfigPresetKeys[number];
 
 type RemixConfigPreset = Omit<VitePluginConfig, ExcludedRemixConfigPresetKey>;
 

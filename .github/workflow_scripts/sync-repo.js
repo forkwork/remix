@@ -47,14 +47,10 @@ module.exports = async ({ github, context }) => {
       khulnasoftRemixPackageJSON.version =
         khulnasoftRemixPackageJSON.peerDependencies["@remix-run/dev"] =
         khulnasoftRemixPackageJSON.peerDependencies["@remix-run/node"] =
-        khulnasoftRemixPackageJSON.peerDependencies[
-          "@remix-run/server-runtime"
-        ] =
+        khulnasoftRemixPackageJSON.peerDependencies["@remix-run/server-runtime"] =
         khulnasoftRemixPackageJSON.devDependencies["@remix-run/dev"] =
         khulnasoftRemixPackageJSON.devDependencies["@remix-run/node"] =
-        khulnasoftRemixPackageJSON.devDependencies[
-          "@remix-run/server-runtime"
-        ] =
+        khulnasoftRemixPackageJSON.devDependencies["@remix-run/server-runtime"] =
           newVersion;
       fs.writeFileSync(
         khulnasoftRemixPackageJSONPath,
@@ -67,9 +63,7 @@ module.exports = async ({ github, context }) => {
       execSync(
         "git add packages/khulnasoft-remix/package.json pnpm-workspace.yaml pnpm-lock.yaml"
       );
-      execSync(
-        `git commit -m "Set version in @khulnasoft/remix to ${newVersion}"`
-      );
+      execSync(`git commit -m "Set version in @khulnasoft/remix to ${newVersion}"`);
       execSync("git push origin main");
 
       await github.rest.actions.createWorkflowDispatch({

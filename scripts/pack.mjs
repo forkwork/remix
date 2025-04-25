@@ -21,8 +21,7 @@ spawnSync("pnpm", ["pack"], { cwd: khulnasoftRemixDir, stdio: "inherit" });
 const khulnasoftRemixTarball = readdirSync(khulnasoftRemixDir).find((f) =>
   f.endsWith(".tgz")
 );
-if (!khulnasoftRemixTarball)
-  throw new Error("Could not find `remix-dev` tarball");
+if (!khulnasoftRemixTarball) throw new Error("Could not find `remix-dev` tarball");
 renameSync(
   new URL(khulnasoftRemixTarball, khulnasoftRemixDir),
   new URL("khulnasoft-remix.tgz", publicDir)

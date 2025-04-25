@@ -32,7 +32,7 @@ if (process.env.LOCAL_BUILD_DIRECTORY) {
  */
 function createBanner(packageName, version, executable = false) {
   let owner = packageName.startsWith("@khulnasoft/")
-    ? "KhulnaSoft, Ltd."
+    ? "Khulnasoft, Inc."
     : "Remix Software Inc.";
   let banner = `/**
  * ${packageName} v${version}

@@ -90,41 +90,44 @@ export let serve = async (
 
   let bin = await detectBin();
   let startAppServer = (command?: string) => {
-    let cmd = command ? command.split(' ') : [
-      'remix-serve',
-      path.relative(process.cwd(), initialConfig.serverBuildPath)
-    ];
-    let newAppServer = execa(cmd[0], cmd.slice(1), {
-      stdio: "pipe",
-      env: {
-        NODE_ENV: "development",
-        PATH:
-          bin + (process.platform === "win32" ? ";" : ":") + process.env.PATH,
-        REMIX_DEV_ORIGIN: options.REMIX_DEV_ORIGIN.href,
-        FORCE_COLOR: process.env.NO_COLOR === undefined ? "1" : "0",
-      },
-      // https://github.com/sindresorhus/execa/issues/433
-      windowsHide: false,
-    })
-    .on("error", (e) => {
-      // patch execa error types
-      invariant("errno" in e && typeof e.errno === "number", "errno missing");
-      invariant("code" in e && typeof e.code === "string", "code missing");
-      invariant("path" in e && typeof e.path === "string", "path missing");
+    let cmd =
+      command ??
+      `remix-serve ${path.relative(
+        process.cwd(),
+        initialConfig.serverBuildPath
+      )}`;
+    let newAppServer = execa
+      .command(cmd, {
+        stdio: "pipe",
+        env: {
+          NODE_ENV: "development",
+          PATH:
+            bin + (process.platform === "win32" ? ";" : ":") + process.env.PATH,
+          REMIX_DEV_ORIGIN: options.REMIX_DEV_ORIGIN.href,
+          FORCE_COLOR: process.env.NO_COLOR === undefined ? "1" : "0",
+        },
+        // https://github.com/sindresorhus/execa/issues/433
+        windowsHide: false,
+      })
+      .on("error", (e) => {
+        // patch execa error types
+        invariant("errno" in e && typeof e.errno === "number", "errno missing");
+        invariant("code" in e && typeof e.code === "string", "code missing");
+        invariant("path" in e && typeof e.path === "string", "path missing");
 
-      if (command === undefined) {
-        logger.error(`command not found: ${e.path}`, {
-          details: [
-            `\`remix dev\` did not receive \`--command\` nor \`-c\`, defaulting to \`${cmd.join(' ')}\`.`,
-            "You probably meant to use `-c` for your app server command.",
-            "For example: `remix dev -c 'node ./server.js'`",
-          ],
-        });
-        process.exit(1);
-      }
-      logger.error("app failed to start" + pc.gray(` (${command})`));
-      throw e;
-    });
+        if (command === undefined) {
+          logger.error(`command not found: ${e.path}`, {
+            details: [
+              `\`remix dev\` did not receive \`--command\` nor \`-c\`, defaulting to \`${cmd}\`.`,
+              "You probably meant to use `-c` for your app server command.",
+              "For example: `remix dev -c 'node ./server.js'`",
+            ],
+          });
+          process.exit(1);
+        }
+        logger.error("app failed to start" + pc.gray(` (${command})`));
+        throw e;
+      });
 
     if (newAppServer.stdin)
       process.stdin.pipe(newAppServer.stdin, { end: true });

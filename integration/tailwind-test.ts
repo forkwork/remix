@@ -14,7 +14,7 @@ const TEST_PADDING_VALUE = "20px";
 
 let extensions = ["mjs", "cjs", "js", "ts"] as const;
 
-function runTests(ext: (typeof extensions)[number]) {
+function runTests(ext: typeof extensions[number]) {
   let fixture: Fixture;
   let appFixture: AppFixture;
 

@@ -31,22 +31,22 @@ jobs:
         id: update-package
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.ORG_REPO_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN_PULL_REQUESTS }}
           script: |
             const script = require('./.github/workflow_scripts/update-package.js');
             return await script({ github, context }, "${{ inputs.version-postfix }}");
       - name: Publish @khulnasoft/remix
         run: cd packages/khulnasoft-remix && pnpm publish --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_ELEVATED }}
       - name: Publish @khulnasoft/remix-run-dev
         run: cd packages/remix-dev && pnpm publish --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_ELEVATED }}
       - name: Trigger update workflow on "khulnasoft/khulnasoft"
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.ORG_REPO_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN_PULL_REQUESTS }}
           script: |
             const script = require('./.github/workflow_scripts/trigger-builder-update.js');
             await script({ github, context }, ${{ steps.update-package.outputs.result }});

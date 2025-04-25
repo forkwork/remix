@@ -29,7 +29,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "cd packages/khulnasoft-remix
+pnpm build
+"
   },
   "dependencies": {
     "@khulnasoft/static-config": "3.0.0",

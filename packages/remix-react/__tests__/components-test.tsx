@@ -92,7 +92,7 @@ describe("<LiveReload />", () => {
 
 const setIntentEvents = ["focus", "mouseEnter", "touchStart"] as const;
 type PrefetchEventHandlerProps = {
-  [Property in `on${Capitalize<(typeof setIntentEvents)[number]>}`]?: Function;
+  [Property in `on${Capitalize<typeof setIntentEvents[number]>}`]?: Function;
 };
 
 function itPrefetchesPageLinks<

@@ -83,66 +83,64 @@ export function khulnasoftPreset(): Preset {
   //      - If there's a hash match, we can safely copy in the Khulnasoft entry server
   //      - If there's no match, then we run a RegExp on the contents to see if `@khulnasoft/remix` is being used
   //          - If no RegExp match, we print a warning and link to docs, but continue the build
-  let injectKhulnasoftEntryServer = runOnce(
-    (remixUserConfig: VitePluginConfig) => {
-      let appDirectory = remixUserConfig.appDirectory ?? "app";
-      let entryServerFile = readdirSync(appDirectory).find(
-        (f) => basename(f, extname(f)) === "entry.server"
+  let injectKhulnasoftEntryServer = runOnce((remixUserConfig: VitePluginConfig) => {
+    let appDirectory = remixUserConfig.appDirectory ?? "app";
+    let entryServerFile = readdirSync(appDirectory).find(
+      (f) => basename(f, extname(f)) === "entry.server"
+    );
+    if (entryServerFile) {
+      originalEntryServerPath = join(appDirectory, entryServerFile);
+      originalEntryServerContents = readFileSync(
+        originalEntryServerPath,
+        "utf8"
       );
-      if (entryServerFile) {
-        originalEntryServerPath = join(appDirectory, entryServerFile);
-        originalEntryServerContents = readFileSync(
-          originalEntryServerPath,
-          "utf8"
-        );
-        let entryServerHash = createHash("sha256")
-          .update(originalEntryServerContents)
-          .digest("hex");
-        if (Object.keys(getEntryServerShas()).includes(entryServerHash)) {
-          console.log(
-            `[vc] Detected unmodified "${entryServerFile}". Copying in default "entry.server.jsx".`
-          );
-          rmSync(originalEntryServerPath);
-          khulnasoftEntryServerPath = join(appDirectory, "entry.server.jsx");
-          cpSync(
-            join(__dirname, "defaults/entry.server.jsx"),
-            khulnasoftEntryServerPath
-          );
-        } else {
-          let usesKhulnasoftRemixPackage = /["']@khulnasoft\/remix['"]/.test(
-            originalEntryServerContents
-          );
-          if (usesKhulnasoftRemixPackage) {
-            console.log(
-              `[vc] Detected "${entryServerFile}" using \`@khulnasoft/remix\``
-            );
-          } else {
-            console.warn(
-              `WARN: The \`@khulnasoft/remix\` package was not detected in your "${entryServerFile}" file.`
-            );
-            console.warn(
-              `WARN: Using the Edge Runtime may not work with your current configuration.`
-            );
-            console.warn(
-              `WARN: Please see the docs to learn how to use a custom "${entryServerFile}":`
-            );
-            console.warn(
-              `WARN: https://khulnasoft.com/docs/frameworks/remix#using-a-custom-app/entry.server-file`
-            );
-          }
-        }
-      } else {
+      let entryServerHash = createHash("sha256")
+        .update(originalEntryServerContents)
+        .digest("hex");
+      if (Object.keys(getEntryServerShas()).includes(entryServerHash)) {
         console.log(
-          `[vc] No "entry.server" found. Copying in default "entry.server.jsx".`
+          `[vc] Detected unmodified "${entryServerFile}". Copying in default "entry.server.jsx".`
         );
+        rmSync(originalEntryServerPath);
         khulnasoftEntryServerPath = join(appDirectory, "entry.server.jsx");
         cpSync(
           join(__dirname, "defaults/entry.server.jsx"),
           khulnasoftEntryServerPath
         );
+      } else {
+        let usesKhulnasoftRemixPackage = /["']@khulnasoft\/remix['"]/.test(
+          originalEntryServerContents
+        );
+        if (usesKhulnasoftRemixPackage) {
+          console.log(
+            `[vc] Detected "${entryServerFile}" using \`@khulnasoft/remix\``
+          );
+        } else {
+          console.warn(
+            `WARN: The \`@khulnasoft/remix\` package was not detected in your "${entryServerFile}" file.`
+          );
+          console.warn(
+            `WARN: Using the Edge Runtime may not work with your current configuration.`
+          );
+          console.warn(
+            `WARN: Please see the docs to learn how to use a custom "${entryServerFile}":`
+          );
+          console.warn(
+            `WARN: https://khulnasoft.com/docs/frameworks/remix#using-a-custom-app/entry.server-file`
+          );
+        }
       }
+    } else {
+      console.log(
+        `[vc] No "entry.server" found. Copying in default "entry.server.jsx".`
+      );
+      khulnasoftEntryServerPath = join(appDirectory, "entry.server.jsx");
+      cpSync(
+        join(__dirname, "defaults/entry.server.jsx"),
+        khulnasoftEntryServerPath
+      );
     }
-  );
+  });
 
   let createServerBundles =
     (remixUserConfig: VitePluginConfig): VitePluginConfig["serverBundles"] =>

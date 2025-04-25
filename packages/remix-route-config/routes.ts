@@ -18,7 +18,7 @@ const routeOptionKeys = [
   "index",
   "caseSensitive",
 ] as const satisfies ReadonlyArray<keyof RouteConfigEntry>;
-type RouteOptions = Pick<RouteConfigEntry, (typeof routeOptionKeys)[number]>;
+type RouteOptions = Pick<RouteConfigEntry, typeof routeOptionKeys[number]>;
 /**
  * Helper function for creating a route config entry, for use within
  * `routes.ts`.
@@ -59,7 +59,7 @@ function route(
 const indexOptionKeys = ["id"] as const satisfies ReadonlyArray<
   keyof RouteConfigEntry
 >;
-type IndexOptions = Pick<RouteConfigEntry, (typeof indexOptionKeys)[number]>;
+type IndexOptions = Pick<RouteConfigEntry, typeof indexOptionKeys[number]>;
 /**
  * Helper function for creating a route config entry for an index route, for use
  * within `routes.ts`.
@@ -75,7 +75,7 @@ function index(file: string, options?: IndexOptions): RouteConfigEntry {
 const layoutOptionKeys = ["id"] as const satisfies ReadonlyArray<
   keyof RouteConfigEntry
 >;
-type LayoutOptions = Pick<RouteConfigEntry, (typeof layoutOptionKeys)[number]>;
+type LayoutOptions = Pick<RouteConfigEntry, typeof layoutOptionKeys[number]>;
 /**
  * Helper function for creating a route config entry for a layout route, for use
  * within `routes.ts`.

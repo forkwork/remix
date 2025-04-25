@@ -24,7 +24,7 @@ const extensions = ["js", "jsx", "ts", "tsx", "mjs", "cjs"] as const;
 const allJsFilesFilter = new RegExp(`\\.(${extensions.join("|")})$`);
 
 type Loader = "js" | "jsx" | "ts" | "tsx";
-type Extension = `.${(typeof extensions)[number]}`;
+type Extension = `.${typeof extensions[number]}`;
 
 const loaderForExtension: Record<Extension, Loader> = {
   ".js": "jsx", // Remix supports JSX in JS files
